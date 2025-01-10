@@ -2,13 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:netflix_clone/screens/main/search_screen.dart';
 
-import '../../data/repository.dart';
-import '../../model/movie.dart';
 import 'home_screen.dart';
 
 final currentBottomNavigationIndexProvider = StateProvider<int>((ref) => 0);
-
-
 
 class MainScreen extends ConsumerWidget {
   const MainScreen({super.key});

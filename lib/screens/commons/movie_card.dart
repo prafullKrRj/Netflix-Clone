@@ -25,11 +25,10 @@ class MovieCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Image Section
             Stack(
               children: [
                 AspectRatio(
-                  aspectRatio: 4 / 3,
+                  aspectRatio: 5 / 3,
                   child: movie.imageUrl != null
                       ? Image.network(
                           movie.imageUrl!,
@@ -97,7 +96,7 @@ class MovieCard extends StatelessWidget {
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
-                            maxLines: 2,
+                            maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),

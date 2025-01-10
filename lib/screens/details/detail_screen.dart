@@ -2,238 +2,167 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:netflix_clone/data/repository.dart';
 
-class MovieDetailsScreen extends ConsumerWidget {
-  const MovieDetailsScreen({
-    super.key,
-  });
+class MovieDetailScreen extends ConsumerWidget {
+  const MovieDetailScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final movie = ref.watch(currentMovieProvider);
     if (movie == null) {
       return const Scaffold(
-        body: Center(
-          child: Text('No movie selected'),
-        ),
+        body: Text("Unable to load"),
       );
     }
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          // Flexible app bar with image
           SliverAppBar(
-            expandedHeight: 300,
+            expandedHeight: 400,
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
-              background: Stack(
-                fit: StackFit.expand,
-                children: [
-                  // Movie poster image
-                  movie.imageUrl != null
-                      ? Image.network(
-                          movie.imageUrl!,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Container(
-                              color: Colors.grey[300],
-                              child: const Icon(Icons.movie, size: 100),
-                            );
-                          },
-                        )
-                      : Container(
-                          color: Colors.grey[300],
-                          child: const Icon(Icons.movie, size: 100),
-                        ),
-                  // Gradient overlay for better text visibility
-                  Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.transparent,
-                          Colors.black.withOpacity(0.7),
-                        ],
-                        stops: const [0.5, 1.0],
-                      ),
-                    ),
-                  ),
-                  // Title and rating at the bottom of the image
-                  Positioned(
-                    bottom: 16,
-                    left: 16,
-                    right: 16,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          movie.name,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            shadows: [
-                              Shadow(
-                                offset: Offset(0, 1),
-                                blurRadius: 3,
-                                color: Colors.black45,
-                              ),
-                            ],
-                          ),
-                        ),
-                        if (movie.rating != null) ...[
-                          const SizedBox(height: 8),
-                          Row(
-                            children: [
-                              const Icon(
-                                Icons.star,
-                                color: Colors.amber,
-                                size: 20,
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                '${movie.rating!.toStringAsFixed(1)}/10',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+              background: movie.imageUrl != null
+                  ? Image.network(
+                      movie.imageUrl!,
+                      fit: BoxFit.cover,
+                    )
+                  : const Center(child: Icon(Icons.movie, size: 100)),
+              title: Text(movie.name),
             ),
           ),
-          // Content
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Status chip
-                  if (movie.status != null)
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: _getStatusColor(movie.status!),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        movie.status!,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w500,
+                  // Header Section
+                  Row(
+                    children: [
+                      if (movie.rating != null)
+                        Chip(
+                          avatar: const Icon(Icons.star, color: Colors.amber),
+                          label: Text(movie.rating!.toString()),
                         ),
-                      ),
-                    ),
+                      const SizedBox(width: 8),
+                      if (movie.status != null)
+                        Chip(
+                          label: Text(movie.status!),
+                          backgroundColor: movie.status == 'Ended'
+                              ? Colors.red.withOpacity(0.2)
+                              : Colors.green.withOpacity(0.2),
+                        ),
+                    ],
+                  ),
                   const SizedBox(height: 16),
-                  // Genres
-                  if (movie.genres != null && movie.genres!.isNotEmpty) ...[
-                    const Text(
-                      'Genres',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
+
+                  // Genre Tags
+                  if (movie.genres?.isNotEmpty ?? false)
                     Wrap(
                       spacing: 8,
-                      runSpacing: 8,
-                      children: movie.genres!.map((genre) {
-                        return Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.grey[200],
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(
-                            genre,
-                            style: TextStyle(
-                              color: Colors.grey[800],
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        );
-                      }).toList(),
+                      children: movie.genres!
+                          .map((genre) => Chip(label: Text(genre)))
+                          .toList(),
                     ),
-                    const SizedBox(height: 24),
-                  ],
-                  // Summary
-                  const Text(
-                    'Summary',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  const SizedBox(height: 24),
+
+                  // Info Section
+                  Text('About',
+                      style: Theme.of(context).textTheme.headlineSmall),
                   const SizedBox(height: 8),
                   Text(
-                    movie.summary,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey[800],
-                      height: 1.5,
-                    ),
+                    movie.summary.replaceAll(RegExp(r'<[^>]*>'), ''),
+                    style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   const SizedBox(height: 24),
-                  // Additional info
-                  if (movie.href != null) ...[
-                    const Text(
-                      'Additional Information',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
+
+                  // Details Section
+                  Text('Details',
+                      style: Theme.of(context).textTheme.headlineSmall),
+                  const SizedBox(height: 8),
+                  _DetailItem(
+                    icon: Icons.language,
+                    label: 'Language',
+                    value: movie.language,
+                  ),
+                  if (movie.runtime != null)
+                    _DetailItem(
+                      icon: Icons.timer,
+                      label: 'Runtime',
+                      value: '${movie.runtime} minutes',
                     ),
-                    const SizedBox(height: 8),
-                    ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      leading: const Icon(Icons.link),
-                      title: const Text('API Link'),
-                      subtitle: Text(
-                        movie.href!,
-                        style: TextStyle(
-                          color: Colors.blue[700],
-                          decoration: TextDecoration.underline,
-                        ),
-                      ),
-                      onTap: () {
-                        // Handle link tap
-                      },
+                  if (movie.premiered != null)
+                    _DetailItem(
+                      icon: Icons.calendar_today,
+                      label: 'Premiered',
+                      value: movie.premiered!,
                     ),
-                  ],
+                  if (movie.network != null)
+                    _DetailItem(
+                      icon: Icons.tv,
+                      label: 'Network',
+                      value:
+                          '${movie.network!.name} (${movie.network!.countryCode})',
+                    ),
+                  if (movie.schedule != null)
+                    _DetailItem(
+                      icon: Icons.schedule,
+                      label: 'Schedule',
+                      value:
+                          '${movie.schedule!.time} on ${movie.schedule!.days.join(", ")}',
+                    ),
                 ],
               ),
             ),
           ),
         ],
       ),
+      floatingActionButton: movie.officialSite != null
+          ? FloatingActionButton.extended(
+              onPressed: () => launchUrl(Uri.parse(movie.officialSite!)),
+              label: const Text('Visit Website'),
+              icon: const Icon(Icons.language),
+            )
+          : null,
     );
   }
 
-  Color _getStatusColor(String status) {
-    switch (status.toLowerCase()) {
-      case 'running':
-        return Colors.green;
-      case 'ended':
-        return Colors.red;
-      case 'in development':
-        return Colors.orange;
-      default:
-        return Colors.blue;
-    }
+  launchUrl(Uri parse) {}
+}
+
+class _DetailItem extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String value;
+
+  const _DetailItem({
+    required this.icon,
+    required this.label,
+    required this.value,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        children: [
+          Icon(icon, size: 20, color: Theme.of(context).colorScheme.secondary),
+          const SizedBox(width: 8),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+              Text(
+                value,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 }
