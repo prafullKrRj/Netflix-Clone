@@ -22,9 +22,11 @@ class MyApp extends StatelessWidget {
       title: 'Netflix Clone',
       darkTheme: ThemeData.dark(),
       debugShowCheckedModeBanner: false,
-      initialRoute: '/main',
+      initialRoute: '/splash',
       routes: {
-        '/splash': (context) => const SplashScreen(),
+        '/splash': (context) => const SplashScreen(
+              nextScreen: MainScreen(),
+            ),
         '/details': (context) => const MovieDetailScreen(),
         '/main': (context) => const MainScreen(),
       },

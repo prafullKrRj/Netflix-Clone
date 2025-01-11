@@ -8,7 +8,7 @@ import '../../data/repository.dart';
 final hasSearchedProvider = StateProvider<bool>((ref) => false);
 final searchQueryProvider = StateProvider<String>((ref) => '');
 
-final searchResultProvider = FutureProvider.autoDispose<List<Movie>>((ref) {
+final searchResultProvider = FutureProvider<List<Movie>>((ref) {
   final searchQuery = ref.watch(searchQueryProvider);
   if (searchQuery.isNotEmpty) {
     final userRepository = ref.watch(userRepositoryProvider);
@@ -78,6 +78,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
                           searchQuery.state = value;
                           ref.refresh(searchResultProvider);
                         },
+                        textInputAction: TextInputAction.search,
+                        cursorColor: Colors.grey,
                         decoration: InputDecoration(
                           hintText: 'Search for movies...',
                           prefixIcon: const Icon(
@@ -147,9 +149,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
                   ),
                 );
               },
-              loading: () => const SliverToBoxAdapter(
-                child: Center(child: CircularProgressIndicator()),
-              ),
+              loading: () => const LoadingScreen(),
               error: (error, stackTrace) => SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
@@ -158,6 +158,86 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class LoadingScreen extends StatelessWidget {
+  const LoadingScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverPadding(
+      padding: const EdgeInsets.all(16.0),
+      sliver: SliverGrid(
+        delegate: SliverChildBuilderDelegate(
+          (context, index) {
+            // Placeholder grid items
+            return Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 10,
+                    spreadRadius: 1,
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Placeholder Image
+                  ClipRRect(
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(12),
+                    ),
+                    child: Container(
+                      height: 120,
+                      color: Colors.grey[300],
+                      child: Center(
+                        child: Icon(
+                          Icons.movie,
+                          size: 40,
+                          color: Colors.grey[400],
+                        ),
+                      ),
+                    ),
+                  ),
+                  // Placeholder Text
+                  Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          height: 16,
+                          width: double.infinity,
+                          color: Colors.grey[200],
+                        ),
+                        const SizedBox(height: 8),
+                        Container(
+                          height: 12,
+                          width: 100,
+                          color: Colors.grey[200],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+          childCount: 6, // Number of placeholder items
+        ),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          mainAxisSpacing: 16,
+          crossAxisSpacing: 16,
+          childAspectRatio: 0.8,
         ),
       ),
     );
