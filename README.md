@@ -11,10 +11,10 @@ A Flutter application that demonstrates movie browsing and searching capabilitie
 
 ## Screenshots
 
-<div style="display: flex; justify-content: space-between;">
-    <img src="https://github.com/prafullKrRj/Netflix-Clone/blob/master/ss/Screenshot_20250111_120739.png?raw=true" alt="Home Screen" />
-    <img src="https://github.com/prafullKrRj/Netflix-Clone/blob/master/ss/Screenshot_20250111_120831.png?raw=true" alt="Search Screen" />
-    <img src="https://github.com/prafullKrRj/Netflix-Clone/blob/master/ss/Screenshot_20250111_120844.png?raw=true" alt="Details Screen" />
+<div style="display: flex; justify-content: space-between; flex-wrap: wrap;">
+    <img src="https://github.com/prafullKrRj/Netflix-Clone/blob/master/ss/Screenshot_20250111_120739.png?raw=true" alt="Home Screen" style="width: 30%; margin: 0.5%;" />
+    <img src="https://github.com/prafullKrRj/Netflix-Clone/blob/master/ss/Screenshot_20250111_120831.png?raw=true" alt="Search Screen" style="width: 30%; margin: 0.5%;" />
+    <img src="https://github.com/prafullKrRj/Netflix-Clone/blob/master/ss/Screenshot_20250111_120844.png?raw=true" alt="Details Screen" style="width: 30%; margin: 0.5%;" />
 </div>
 
 ## Architecture
