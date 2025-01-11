@@ -126,7 +126,7 @@ class MovieDetailScreen extends ConsumerWidget {
     );
   }
 
-  launchUrl(Uri parse) {}
+  void launchUrl(Uri uri) {}
 }
 
 class _DetailItem extends StatelessWidget {

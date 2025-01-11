@@ -2,8 +2,8 @@
 
     <application
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher"
-        android:label="netflix_clone">
+        android:icon="@mipmap/netflix_logo"
+        android:label="Netflix Clone">
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
